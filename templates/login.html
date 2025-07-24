@@ -23,7 +23,7 @@
 
         <form onsubmit="handleLogin(event)">
             <!-- username field -->
-            <input type="text" id="username" placeholder="Username" required />
+            <input type="text" id="username" placeholder="Employee ID" required />
 
             <!-- password field -->
             <input type="password" id="password" placeholder="Password" required />
@@ -34,7 +34,7 @@
             <div class="spacing"></div>
 
             <!-- sign up redirect -->
-            <button onclick="window.location.href='signup.html'" type="button">Sign Up</button>
+            <button onclick="window.location.href='signup.html'" type="button">Request Access</button>
 
             <!-- forgot password -->
             <div class="forgot-password">
@@ -48,10 +48,10 @@
   <div class="modal-content">
     <span class="close" onclick="closeResetModal()">&times;</span>
     <h2>Reset Password</h2>
-    <p>Enter email to receive a reset link</p>
-    <input type="email" id="reset-email" placeholder="Enter your email" required />
-    <button onclick="sendResetLink()">Send Reset Link</button>
-    <p id="resetMessage">Email Sent Successfully!</p>
+    <p>Enter Employee ID for Request</p>
+    <input type="ID" id="reset-notif" placeholder="Enter Employee ID" required />
+    <button onclick="sendResetLink()">Send Reset Password Notice</button>
+    <p id="resetMessage">Password Reset Request Sent</p>
   </div>
 </div>
 
@@ -68,7 +68,8 @@
 </div>
 </div>
 
-<script src="javascript/login-script.js"></script>
+<script src="jscript/login.js"></script>
 
 </body>
 </html>
+
