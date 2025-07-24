@@ -1,0 +1,165 @@
+
+/* Reset margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body and HTML styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+}
+.spacing{
+  margin-top: 10px;
+}
+/* Main container for login */
+.login-container {
+  display: flex;
+  justify-content: center;  /* center horizontally */
+  align-items: center;      /* center vertically */
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+/* Transparent overlay if needed (optional) */
+.overlay {
+  background-color: gray solid; /* transparent */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* Logo and title container */
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 20px;
+  height: auto;
+}
+
+.logo-container img {
+  max-width: 200px;
+  height: auto;
+  background-color: transparent; /* Ensure logo has no background */
+
+}
+
+.logo-container :hover {
+    transform: scale(1.05); /* Slightly enlarge logo on hover */
+    transition: transform 0.3s ease; /* Smooth transition effect */
+
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0 20px;
+}
+
+.resetpassword{
+  color: green;
+  display: none
+}
+
+/* Login box styles */
+.login-box {
+  background-color: #fff;
+  padding: 30px;
+  border: 2px gray solid;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+}
+
+.login-box h1 {
+  margin-bottom: 20px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #333;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  background-color: #45a049;
+}
+
+/* Modal (overlay) */
+/* ===== Modal Overlay Styles ===== */
+.modal {
+  display: none; /* Hidden by default */ 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal Content Container */
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* Close Button Style */
+.modal-content .close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.resetModal .modal{
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.closeLoginModal{
+  padding: 8px 16px;
+  margin-top: 10px
+}
