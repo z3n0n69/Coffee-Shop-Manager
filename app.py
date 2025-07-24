@@ -45,11 +45,11 @@ def dbrequest_access():
 
 
 app = Flask(__name__) #flask constructor 
-
+    
 @app.route('/')  # Define a route for the login endpoint
 
 def index(): 
-    return render_template('index.html')  # Render the index.html template
+    return render_template('login.html')  # Render the index.html template
 
 
 @app.route('/login', methods = ['POST']) # Define a route for the login endpoint with POST method 
@@ -58,15 +58,15 @@ def index():
 def login(): 
     if request.method == 'POST': 
         username = request.form['username']
-        password = request.form['password']
+        password = request.form['password'] 
         return make_response(render_template("dashboard.html")) 
     else: 
-        return make_response(render_template("index.html", error="Invalid credentials"))
+        return make_response(render_template("login.html", error="Invalid credentials"))
 
 
 @app.route('/accessrequest')
 def access_request_page(): 
-    return render_template('accessrequest.html')
+    return render_template('request.html')
 
 if __name__ == '__main__':
     app.run(debug=True)  # Run the Flask application in debug mode
