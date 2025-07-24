@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/login.css">
+    <title>Log-In | COMPANY</title>
+    <style>
+        @import url('css/login-style.css');
+    </style>
+</head>
+<body>
+    <div class="login-container">
+  <div>
+    <div class="logo-container">
+      <img src="#" alt="Company LOGO" />
+      <div class="title">COMPANY NAME</div>
+    </div>
+
+    <div class="login-box"> <!-- login box -->
+        <h1>Log-In</h1>
+
+        <form onsubmit="handleLogin(event)">
+            <!-- username field -->
+            <input type="text" id="username" placeholder="Username" required />
+
+            <!-- password field -->
+            <input type="password" id="password" placeholder="Password" required />
+
+            <!-- login button -->
+            <button type="submit">Log In</button>
+
+            <div class="spacing"></div>
+
+            <!-- sign up redirect -->
+            <button onclick="window.location.href='signup.html'" type="button">Sign Up</button>
+
+            <!-- forgot password -->
+            <div class="forgot-password">
+                <a href="#" onclick="openResetModal()">Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Reset Password Modal -->
+<div id="resetModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeResetModal()">&times;</span>
+    <h2>Reset Password</h2>
+    <p>Enter email to receive a reset link</p>
+    <input type="email" id="reset-email" placeholder="Enter your email" required />
+    <button onclick="sendResetLink()">Send Reset Link</button>
+    <p id="resetMessage">Email Sent Successfully!</p>
+  </div>
+</div>
+
+<!-- Login Successful Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <h2>Login Successful</h2>
+    <p>Welcome, <span id="loginUsername"></span>!</p>
+    <p>Redirecting...</p>
+    <button onclick="closeLoginModal()">OK</button>
+  </div>
+</div>
+
+</div>
+</div>
+
+</body>
+</html>
