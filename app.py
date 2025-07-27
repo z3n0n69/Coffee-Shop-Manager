@@ -83,8 +83,13 @@ def handle_login_request():
         
         else: 
             return render_template('dashboard.html')
-                
-        
+
+
+@app.route('/request_access_page')
+
+def request_access_page():
+    return render_template('signup.html')
+
         
         
     
