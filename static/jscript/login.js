@@ -28,7 +28,7 @@ function handleLogin(event) {
     const password = document.getElementById("password").value;
 
     const users = JSON.parse(localStorage.getItem("users") || "[]");
-
+    
     const user = users.find(u => u.username === username && u.password === password);
     if (!username || !password) {
         alert("Please fill in username and password.");

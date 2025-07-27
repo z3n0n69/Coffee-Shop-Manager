@@ -21,12 +21,12 @@
     <div class="login-box"> <!-- login box -->
         <h1>Log-In</h1>
 
-        <form onsubmit="handleLogin(event)">
+        <form action="/login_request" method = "POST" >
             <!-- username field -->
-            <input type="text" id="username" placeholder="Employee ID" required />
+            <input type="text" id="username" placeholder="Employee ID" name="input_username_login"required />
 
             <!-- password field -->
-            <input type="password" id="password" placeholder="Password" required />
+            <input type="password" id="password" placeholder="Password" name="input_password_login" required />
 
             <!-- login button -->
             <button type="submit">Log In</button>
@@ -34,7 +34,7 @@
             <div class="spacing"></div>
 
             <!-- sign up redirect -->
-            <button onclick="window.location.href='signup.html'" type="button">Request Access</button>
+            <button onclick="window.location.href='/signup.html'" type="button">Request Access</button>
 
             <!-- forgot password -->
             <div class="forgot-password">
@@ -68,7 +68,7 @@
 </div>
 </div>
 
-<script src="jscript/login.js"></script>
+<!--<script src="jscript/login.js"></script>-->
 
 </body>
 </html>
