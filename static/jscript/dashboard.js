@@ -1,29 +1,38 @@
-const defaultStockItems = [
-  { name: 'Coffee Beans', icon: 'coffee.svg', stock: 85 },
-  { name: 'Milk', icon: 'milk.svg', stock: 60 },
-  { name: 'Chocolate Syrup', icon: 'syrup.svg', stock: 30 },
-  { name: 'Cups', icon: 'cup.svg', stock: 100 },
-  { name: 'Lids', icon: 'lids.svg', stock: 95 },
-  { name: 'Sugar Packets', icon: 'sugar.svg', stock: 70 },
-  { name: 'Napkins', icon: 'napkins.svg', stock: 45 },
-  { name: 'Straws', icon: 'straws.svg', stock: 58 },
-  { name: 'Whipped Cream', icon: 'cream.svg', stock: 35 }
-];
-
+// Local storage access key
 const LOCAL_STORAGE_KEY = "coffeeStockData";
-let stockItems = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || defaultStockItems;
 
+// loads data from local or flask database
+async function loadStockItems() {
+  const localData = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (localData) {
+    return JSON.parse(localData);
+  }
+
+  try {
+    // fetch backend
+    const response = await fetch("http://localhost:5000/api/stock");
+    const data = await response.json();
+
+    // saves to local storage onleh
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch stock items from backend:", error);
+    return [];
+  }
+}
+
+let stockItems = []; // main memory fetch
 const stockGrid = document.getElementById('stockGrid');
 
-// Delete modal elements
+// delete names onleh
 const deleteModal = document.getElementById("deleteModal");
 const deleteItemName = document.getElementById("deleteItemName");
 const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
-
 let itemToDeleteIndex = null;
 
-
+// refresh stock
 function renderStock() {
   stockGrid.innerHTML = '';
   stockItems.forEach((item, index) => {
@@ -35,23 +44,31 @@ function renderStock() {
     const card = document.createElement('div');
     card.className = 'stock-card';
     card.innerHTML = `
-        <img src="assets/icons/${item.icon}" alt="${item.name}" class="stock-icon">
         <div class="stock-info">
-        <h2>${item.name}</h2>
-        <div class="stock-count ${stockClass}" id="count-${index}">${item.stock}</div>
-        <div class="buttons">
-        <button onclick="updateStock(${index}, -1)">−</button>
-        <button onclick="updateStock(${index}, 1)">+</button>
-     </div>
-    <button class="delete-btn" onclick="deleteItem(${index})">🗑 Delete</button>
-  </div>
+          <h2>${item.name}</h2>
+          <div class="stock-count ${stockClass}" id="count-${index}">${item.stock}</div>
+          <div class="buttons">
+            <button onclick="updateStock(${index}, -1)">−</button>
+            <button onclick="updateStock(${index}, 1)">+</button>
+          </div>
+          <button class="delete-btn" onclick="deleteItem(${index})">🗑 Delete</button>
+        </div>
     `;
     stockGrid.appendChild(card);
   });
 }
 
-function updateStock(index, change) {
+// value and stock + localStorage
+async function updateStock(index, change) {
   stockItems[index].stock = Math.max(0, stockItems[index].stock + change);
+
+  // save data to backend
+  await fetch(`http://localhost:5000/api/stock/${stockItems[index].id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stock: stockItems[index].stock })
+  });
+
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stockItems));
 
   const countEl = document.getElementById(`count-${index}`);
@@ -62,18 +79,17 @@ function updateStock(index, change) {
   if (newStock <= 49) countEl.classList.add('low');
   else if (newStock <= 70) countEl.classList.add('warning');
   else countEl.classList.add('safe');
-
 }
 
+
+// delete popup
 function deleteItem(index) {
   itemToDeleteIndex = index;
   deleteItemName.textContent = `Are you sure you want to delete "${stockItems[index].name}"?`;
   deleteModal.style.display = "flex";
 }
 
-
-
-// Open/Close modal
+// open add modal onclick
 document.getElementById("addItemBtn").onclick = () => {
   document.getElementById("addModal").style.display = "flex";
 };
@@ -82,61 +98,66 @@ document.getElementById("cancelItem").onclick = () => {
   closeAddModal();
 };
 
+// reset
 function closeAddModal() {
   document.getElementById("addModal").style.display = "none";
   document.getElementById("itemName").value = '';
   document.getElementById("itemStock").value = '';
-  document.getElementById("itemImage").value = '';
 }
 
-// Save Item
-document.getElementById("saveItem").onclick = () => {
+// Save new item
+document.getElementById("saveItem").onclick = async () => {
   const nameInput = document.getElementById("itemName");
   const stockInput = document.getElementById("itemStock");
-  const imageInput = document.getElementById("itemImage");
 
   const name = nameInput.value.trim();
   const stock = parseInt(stockInput.value);
-  const file = imageInput.files[0];
 
-  if (!name || isNaN(stock) || stock < 0 || !file || !file.type.startsWith("image/")) {
-    showCustomModal("Please enter valid item details and upload an image.");
+  if (!name || isNaN(stock) || stock < 0) {
+    showCustomModal("Please enter valid item details.");
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const imageData = e.target.result;
-
-    const newItem = {
-      name: capitalize(name),
-      stock: stock,
-      imageData: imageData
-    };
-
-    stockItems.push(newItem);
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stockItems));
-    renderStock();
-    closeAddModal();
+  const newItem = {
+    name: capitalize(name),
+    stock: stock
   };
 
-  reader.readAsDataURL(file);
+  // add to database
+  await fetch("http://localhost:5000/api/stock", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newItem)
+  });
+
+  // refresh backend
+  stockItems = await loadStockItems();
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stockItems));
+  renderStock();
+  closeAddModal();
 };
+
 
 function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-renderStock();
-
+// close when clicked outside modal
 window.onclick = (e) => {
-  if (e.target === addModal) {
-    addModal.style.display = "none";
-  }
+  if (e.target === addModal) addModal.style.display = "none";
+  if (e.target === deleteModal) deleteModal.style.display = "none";
 };
 
-confirmDeleteBtn.onclick = () => {
+// confirmation for delete
+confirmDeleteBtn.onclick = async () => {
   if (itemToDeleteIndex !== null) {
+    const item = stockItems[itemToDeleteIndex];
+
+    // delete also on backend
+    await fetch(`http://localhost:5000/api/stock/${item.id}`, {
+      method: 'DELETE'
+    });
+
     stockItems.splice(itemToDeleteIndex, 1);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(stockItems));
     renderStock();
@@ -145,26 +166,21 @@ confirmDeleteBtn.onclick = () => {
   deleteModal.style.display = "none";
 };
 
+
 cancelDeleteBtn.onclick = () => {
   itemToDeleteIndex = null;
   deleteModal.style.display = "none";
 };
 
-window.onclick = (e) => {
-  if (e.target === addModal) addModal.style.display = "none";
-  if (e.target === deleteModal) deleteModal.style.display = "none";
-};
-
+// pdf download not necessary pero I think its good
 const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 
 downloadPdfBtn.onclick = () => {
-  generatePdfTable(); // Fill in the table
-
+  generatePdfTable(); // dom load
   const pdfElement = document.getElementById("pdfContent");
-
   pdfElement.style.display = "block";
 
-  // delay for conversion
+  // dom loader
   setTimeout(() => {
     html2pdf()
       .set({
@@ -177,32 +193,26 @@ downloadPdfBtn.onclick = () => {
       .from(pdfElement)
       .save()
       .then(() => {
-        // Auto hide
         pdfElement.style.display = "none";
       });
-  }, 100); // Delay
+  }, 100);
 };
 
-
+// pdf generation
 function generatePdfTable() {
   const tbody = document.getElementById("pdfTableBody");
   const timeEl = document.getElementById("generatedTime");
   tbody.innerHTML = '';
 
-  // Includes current date/time on pdf
   const now = new Date();
   const formatted = now.toLocaleString();
   timeEl.textContent = `Generated on: ${formatted}`;
 
   stockItems.forEach(item => {
     let status = '';
-    if (item.stock <= 49) {
-      status = '🔴 Low Stock';
-    } else if (item.stock <= 70) {
-      status = '🟠 Restock Now';
-    } else {
-      status = '🟢 Safe';
-    }
+    if (item.stock <= 49) status = '🔴 Low Stock';
+    else if (item.stock <= 70) status = '🟠 Restock Now';
+    else status = '🟢 Safe';
 
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -214,3 +224,8 @@ function generatePdfTable() {
   });
 }
 
+// another local or backend fetch call for proper loading onleh
+loadStockItems().then(data => {
+  stockItems = data;
+  renderStock(); // displays backend content
+});
