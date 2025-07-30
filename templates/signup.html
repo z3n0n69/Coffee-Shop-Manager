@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- Ensure the page is responsive on different devices -->
     <meta http-equiv="X-UA-Compatible" content="ie=edge">                   <!-- Make the page compatible with older versions of Internet Explorer -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">                  <!-- Link to external stylesheet for signup page styles -->
-    <title>Sign Up | Vane's Travel & Tours</title>                          <!-- Page title shown in browser tab -->
+    <title>Request Access</title>                          <!-- Page title shown in browser tab -->
 </head>
 <body>
 
@@ -17,18 +17,18 @@
         </div>
 
         <div class="signup-box">                                                <!-- Signup form container -->
-            <h1>Sign Up</h1>
+            <h1>Request Access</h1>
 
             <!-- Signup form begins -->
-            <form onsubmit="handleSignup(event)">                               <!-- Prevent default form submission to handle it with JavaScript -->
+            <form action="/request_access">                               <!-- Prevent default form submission to handle it with JavaScript -->
                 <!-- Input field for username -->
-                <input type="text" id="username" placeholder="Username" required />
+                <input type="text" id="employeeid" placeholder="Employee ID" name = 'requestinput_employeeID'required />
 
                 <!-- Input field for full name -->
-                <input type="text" id="fullname" placeholder="Employee Name" required />
+                <input type="text" id="fullname" placeholder="Employee Name" name = 'requestinput_employee_name' required />
 
                 <!-- Input field for password -->
-                <input type="password" id="password" placeholder="Desired Password" required />
+                <input type="password" id="password" placeholder="Desired Password" name = 'requestinput_password' required />
 
                 <!-- Submit button that triggers form submission -->
                 <button type="submit">Sign Up</button>

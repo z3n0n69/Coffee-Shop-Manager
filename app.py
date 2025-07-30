@@ -7,10 +7,9 @@ import mysql.connector
 """
 NOTES: 
 * Must connect to MySQL database - DONE 
-* Create a function to request access to the Coffee Shop Manager App.
-* Create a function to validate login credentials.
-
-
+* Create a function to request access to the Coffee Shop Manager App. 
+* Create a function to validate login credentials. - DONE
+* Create a class to have all the function needed for making queries for the database
 
 """
 
@@ -20,19 +19,41 @@ NOTES:
 
 #mySQL connection setup 
 
+usersSchema = "users"
+loginsTable = "logins"
+requestSchema = "accessrequest"
+requestTable = "pendingrequest"
+
 mydb = mysql.connector.connect(
 
-    host="localhost", 
-    user = "root", 
-    password = "root"
+        host="localhost", 
+        user = "root", 
+        password = "root"
 
-)
+        )
 
-dbchecklogincreds = "SELECT * FROM "
+#Class for fetching something in the database 
+
+class FetchDB: 
+    
+    def __init__(self, username, password, schema, table):
+        self.username = username 
+        self.password = password 
+        self.schema = schema 
+        self.table = table 
+    
 
 
-
-
+    def loginverifier(self, database): 
+        dbcommand = database.cursor() 
+        dbcommand.execute("USE users")
+        dbcommand.execute("SELECT * FROM logins WHERE Username = %s AND Password = %s", (self.username, self.password))
+        result = dbcommand.fetchone()
+        return result
+    
+    def requestaccess(self, database)
+         
+        
 
 
 
@@ -52,19 +73,19 @@ def login_request():
 def handle_login_request():
 
 
+
     if request.method == "POST": 
 
         input_username = request.form.get('input_username_login') 
         input_password = request.form.get('input_password_login')
         #validation logic 
-
-        dbquerycursor = mydb.cursor() 
-        dbquerycursor.execute("USE users")
-        dbquerycursor.execute("SELECT * FROM logins WHERE Username = %s AND Password = %s", (input_username, input_password))
-        result = dbquerycursor.fetchone()
-        print(result)
+        fetchLogin = FetchDB(input_username, input_password,usersSchema,loginsTable )
+        fetchedResult = fetchLogin.loginverifier(mydb)
         
-        if result == None: #if user is not in the database 
+        
+        print(fetchedResult)
+        
+        if fetchedResult == None: #if user is not in the database 
             response = '''
                 <html>
                     <head>
@@ -90,9 +111,18 @@ def handle_login_request():
 def request_access_page():
     return render_template('signup.html')
 
-        
-        
-    
+
+#Request access page
+@app.route('/request_access' , methods = ['POST'])
+
+def request_access(): 
+    if request.method == "POST":
+        requestinput_employeeID = request.form.get('requestinput_employeeID')
+        requestinput_employeeName = request.form.get('requestinput_employeeName')
+        requestinput_password = request.form.get('requestinput_password')
+
+        #putting this to the request database
+        dbquerycursor = mydb.cursor()   
 
 
 
